@@ -28,5 +28,11 @@ describe Samson::ProcessUtils do
       Samson.statsd.stubs(:gauge).with('process.start.time', anything, anything)
       assert Samson::ProcessUtils.report_to_statsd
     end
+
+    it 'report different value for timeout processes' do
+      Samson.statsd.stubs(:gauge).with('process.start.time', 2.0, anything)
+      Time.stubs(:parse).returns Time.now - Rails.application.config.samson.deploy_timeout
+      assert Samson::ProcessUtils.report_to_statsd
+    end
   end
 end
